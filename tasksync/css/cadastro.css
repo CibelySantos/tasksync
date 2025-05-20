@@ -1,0 +1,111 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2; 
+    display: flex;
+    justify-content: center; 
+    align-items: center;  
+    height: 100vh; 
+    margin: 0;
+    padding-top: 80px;
+    flex-direction: column;
+}
+header {
+    background-color: rgb(14, 14, 38);
+    padding: 10px 20px; 
+    position: fixed; 
+    top: 0;  
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center; 
+    z-index: 1000;
+}
+header .logo-nav {
+    display: flex;
+    align-items: center;
+}
+header .logo-nav img {
+    max-width: 90px; 
+    margin-right: 10px; 
+}
+header #site {
+    font-family: "Atma", system-ui;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #4b1d65;
+    margin-left: 10px; 
+}
+.cadastro {
+    background-color: rgb(14, 14, 38);
+    width: 350px;
+    padding: 30px 40px 40px 40px; 
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; 
+    justify-content: center;
+    align-items: center;
+}
+.cadastro .logo {
+    max-width: 80%;
+    margin-bottom: 20px; 
+}
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+.cadastro label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: left;
+    color: rgb(254, 102, 196);
+}
+.cadastro input[type="text"],
+.cadastro input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgb(202, 108, 229);
+    border-radius: 5px;
+    font-size: 16px;
+}
+button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: rgb(202, 108, 229);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: rgb(54, 41, 58);
+    font-size: 16px;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+}
+button[type="submit"]:hover {
+    background-color: rgb(54, 41, 58); 
+    color: rgb(202, 108, 229);
+}
+.register-link {
+    margin-top: 10px;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.register-link a {
+    color: rgb(254, 102, 196);
+    text-decoration: none;
+}
+.register-link a:hover {
+    text-decoration: underline;
+}
