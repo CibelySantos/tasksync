@@ -109,3 +109,62 @@ button[type="submit"]:hover {
 .register-link a:hover {
     text-decoration: underline;
 }
+
+/* ===== Responsividade ===== */
+@media (max-width: 480px) {
+    body {
+        padding-top: 60px;
+        height: auto;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    header {
+        padding: 8px 10px;
+        justify-content: center;
+    }
+    header .logo-nav img {
+        max-width: 60px;
+        margin-right: 5px;
+    }
+    header #site {
+        font-size: 2rem;
+        margin-left: 0;
+    }
+    .cadastro {
+        width: 100%;
+        padding: 20px;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    .cadastro .logo {
+        max-width: 60%;
+        margin-bottom: 15px;
+    }
+    .cadastro label {
+        font-size: 12px;
+    }
+    .cadastro input[type="text"],
+    .cadastro input[type="password"] {
+        font-size: 14px;
+        padding: 8px;
+    }
+    button[type="submit"] {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+
+/* Pra tablets e telas médias */
+@media (min-width: 481px) and (max-width: 768px) {
+    .cadastro {
+     width: 70vw; /* médio dispositivos, tablet */
+     padding: 30px 30px 40px 30px;
+    }
+    header .logo-nav img {
+        max-width: 75px;
+        margin-right: 8px;
+    }
+    header #site {
+        font-size: 2.5rem;
+    }
+}

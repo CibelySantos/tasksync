@@ -11,29 +11,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (empty($nome) || empty($senha)) {
         $mensagem = "Por favor, preencha todos os campos.";
     } else {
-        try {
-            $query = "SELECT * FROM usuarios WHERE nome_usuarios = :nome";
-            $stmt = $conexao->prepare($query);
-            $stmt->bindValue(':nome', $nome, PDO::PARAM_STR);
-            $stmt->execute();
+        $nome = $conn->real_escape_string($nome);
+        $query = "SELECT * FROM usuarios WHERE nome_usuarios = '$nome'";
+        $resultado = $conn->query($query);
 
-            if ($stmt->rowCount() > 0) {
-                $usuario_logado = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($resultado->num_rows > 0) {
+            $usuario_logado = $resultado->fetch_assoc();
 
-                if (password_verify($senha, $usuario_logado['senha_usuarios'])) {
-                    $_SESSION['usuario_sessao'] = $usuario_logado['senha_usuarios'];
-                    $_SESSION['usuario_sessao'] = $usuario_logado['nome_usuarios'];
-
-                    header('Location: gerenctarefa.php');
-                    exit();
-                } else {
-                    $mensagem = "Senha incorreta. Tente novamente.";
-                }
+            if (password_verify($senha, $usuario_logado['senha_usuarios'])) {
+                $_SESSION['usuario_nome'] = $usuario_logado['nome_usuarios'];
+                $_SESSION['usuario_id'] = $usuario_logado['id_usuarios'];
+                header('Location: gerenctarefa.php');
+                exit();
             } else {
-                $mensagem = "Usuário não encontrado. Verifique seu nome.";
+                $mensagem = "Senha incorreta. Tente novamente.";
             }
-        } catch (PDOException $e) {
-            $mensagem = "Erro ao conectar ao banco de dados: " . $e->getMessage();
+        } else {
+            $mensagem = "Usuário não encontrado. Verifique seu nome.";
         }
     }
 }

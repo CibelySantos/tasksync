@@ -68,6 +68,7 @@ header #site {
     margin-bottom: 5px;
     text-align: left; 
     color: rgb(254, 102, 196);
+    width: 100%;
 }
 .login input[type="text"],
 .login input[type="password"] {
@@ -112,4 +113,49 @@ button[type="submit"]:hover {
 }
 p{
     color: rgb(255, 255, 255);
+}
+
+/* Responsividade aqui abaixo */
+
+@media (max-width: 400px) {
+    .login {
+        width: 90vw; /* 90% da largura da tela, fluido pra celular */
+        padding: 20px;
+    }
+    header .logo-nav img {
+        max-width: 60px; /* Logo menor no celular */
+        margin-right: 5px;
+    }
+    header #site {
+        font-size: 2rem; /* título menor no celular */
+        margin-left: 5px;
+    }
+    .login label {
+        font-size: 12px;
+    }
+    .login input[type="text"],
+    .login input[type="password"] {
+        font-size: 14px;
+        padding: 8px;
+    }
+    button[type="submit"] {
+        font-size: 14px;
+        padding: 10px;
+    }
+    .register-link {
+        font-size: 12px;
+    }
+}
+@media (max-width: 768px) and (min-width: 401px) {
+    .login {
+        width: 70vw; /* médio dispositivos, tablet */
+        padding: 30px 30px 40px 30px;
+    }
+    header .logo-nav img {
+        max-width: 75px;
+        margin-right: 8px;
+    }
+    header #site {
+        font-size: 2.5rem;
+    }
 }
