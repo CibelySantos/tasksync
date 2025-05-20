@@ -1,244 +1,127 @@
-<?php
+<?php 
 include './bd/conexao.php';
 session_start();
 
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (isset($_POST['action'])) {
+        $action = $_POST['action'];
 
-if ($_SESSION['usuario_sessao'] == "" && $_SESSION['tipo_sessao'] == "") {
-    header("Location: ../index.php");
-    exit();
-}
+        if ($action === 'add') {
+            $setor = $_POST['setor'];
+            $prioridade = $_POST['prioridade'];
+            $dataCriacao = $_POST['datacriacao'];
+            $descricao = $_POST['descricao'];
+            $status = $_POST['status'];
+            $usuario = $_POST['usuario'];
+            $titulo = $_POST['titulo'];
 
-$searchTerm = '';
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['action']) && isset($_SESSION['tipo_sessao']) && $_SESSION['tipo_sessao'] === 'administrador') {
-        
-        if ($_POST['action'] == 'add') {
-            $titulo = $_POST['term'];
-            $descricao = $_POST['definition'];
-            $sql = "INSERT INTO glossario (titulo, descricao) VALUES (?, ?)";
-            $stmt = $connection->prepare($sql);
-            $stmt->bind_param('ss', $titulo, $descricao);
+            $stmt = $conn->prepare("INSERT INTO tarefas (setor_tarefas, prioridade_tarefas, datacriacao_tarefas, descricao_tarefas, status_tarefas, id_usuarios, titulo_tarefas) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssssis", $setor, $prioridade, $dataCriacao, $descricao, $status, $usuario, $titulo);
             $stmt->execute();
-            header("Location: glossario.php");
-            exit();
-        } elseif ($_POST['action'] == 'delete') {
-            $id_palavra = $_POST['id_palavra'];
-            $sql = "DELETE FROM glossario WHERE id_palavra = ?";
-            $stmt = $connection->prepare($sql);
-            $stmt->bind_param('i', $id_palavra);
-            $stmt->execute();
-            header("Location: glossario.php");
-            exit();
-        } elseif ($_POST['action'] == 'edit') {
-            $id_palavra = $_POST['id_palavra'];
-            $titulo = $_POST['term'];
-            $descricao = $_POST['definition'];
-            $sql = "UPDATE glossario SET titulo = ?, descricao = ? WHERE id_palavra = ?";
-            $stmt = $connection->prepare($sql);
-            $stmt->bind_param('ssi', $titulo, $descricao, $id_palavra);
-            $stmt->execute();
-
-            // Define uma variável de sessão para indicar que a edição foi bem-sucedida
             $_SESSION['edit_success'] = true;
-
-            header("Location: glossario.php");
+            header("Location: gerenctarefa.php");
             exit();
         }
-    } elseif (isset($_POST['search'])) {
-        $searchTerm = $_POST['search'];
-    }
-}
 
-$sql = "SELECT * FROM glossario";
-if (!empty($searchTerm)) {
-    $sql .= " WHERE titulo LIKE ?";
-    $stmt = $connection->prepare($sql);
-    $likeSearchTerm = '%' . $searchTerm . '%';
-    $stmt->bind_param('s', $likeSearchTerm);
-    $stmt->execute();
-    $result = $stmt->get_result();
-} else {
-    $sql .= " ORDER BY titulo ASC"; 
-    $result = $connection->query($sql);
-}
+        if ($action === 'edit') {
+            $id = $_POST['id_tarefa'];
+            $setor = $_POST['setor'];
+            $prioridade = $_POST['prioridade'];
+            $dataCriacao = $_POST['datacriacao'];
+            $descricao = $_POST['descricao'];
+            $status = $_POST['status'];
+            $usuario = $_POST['usuario'];
 
-function destacarTermo($texto, $termo) {
-    if (empty($termo)) return $texto;
-    return preg_replace("/(" . preg_quote($termo, '/') . ")/i", '<strong class>$1</strong>', $texto);
-}
+            $stmt = $conn->prepare("UPDATE tarefas SET setor_tarefas=?, prioridade_tarefas=?, datacriacao_tarefas=?, descricao_tarefas=?, status_tarefas=?, id_usuarios=? WHERE id_tarefas=?");
+            $stmt->bind_param("ssssssi", $setor, $prioridade, $dataCriacao, $descricao, $status, $usuario, $id);
+            $stmt->execute();
+            $_SESSION['edit_success'] = true;
+            header("Location: gerenctarefa.php");
+            exit();
+        }
 
-$menuPrincipal = '
-    <li class="nav-item">
-        <a class="nav-link text-white" href="glossario.php">Glossário</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-white" href="idadeprimitiva.php">Idade Primitiva</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-white" href="idadeantiga.php">Idade Antiga</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-white" href="idademedia.php">Idade Média</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-white" href="idademoderna.php">Idade Moderna</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-white" href="idadecontemporanea.php">Idade Contemporânea</a>
-    </li>
-    
-    <li class="nav-item">
-        <a class="nav-link text-white" href="../bd/logout.php">Sair</a>
-    </li>
-';
-
-$menuUsuarioEspecifico = '';
-
-if (isset($_SESSION['tipo_sessao'])) {
-    if ($_SESSION['tipo_sessao'] === 'administrador') {
-        $menuUsuarioEspecifico .= '
-            <li class="nav-item">
-                <a class="nav-link text-white" href="administrador.php">Página do Administrador</a>
-            </li>
-        ';
-    } elseif ($_SESSION['tipo_sessao'] === 'aluno') {
-        $menuUsuarioEspecifico .= '
-            <li class="nav-item">
-                <a class="nav-link text-white" href="aluno.php">Página do Aluno</a>
-            </li>
-        ';
+        if ($action === 'delete') {
+            $id = $_POST['id_tarefa'];
+            $conn->query("DELETE FROM tarefas WHERE id_tarefas = $id");
+            $_SESSION['edit_success'] = true;
+            header("Location: gerenctarefa.php");
+            exit();
+        }
     }
 }
 ?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glossário</title>
-    <link rel="icon" href="../img/img_para_colocar_no_title-removebg-preview.png" type="image/x-icon">
-    <link rel="stylesheet" href="../css/glossario.css">
+    <title>Tarefas</title>
+    <link rel="stylesheet" href="./css/gerenctarefa.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- SweetAlert2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
 <body>
-<!-- SweetAlert2 Script -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.all.min.js"></script>
-
-<!-- Verificação do sucesso da edição -->
-<?php if (isset($_SESSION['edit_success']) && $_SESSION['edit_success']): ?>
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Card editado com sucesso!',
-            showConfirmButton: true
-        });
-    </script>
-    <?php unset($_SESSION['edit_success']); ?>
-<?php endif; ?>
-
-<div class="pos-f-t">
-    <div class="offcanvas offcanvas-start bg-dark text-white custom-offcanvas" tabindex="-1" id="offcanvasNavbar"
-         aria-labelledby="offcanvasNavbarLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasNavbarLabel"></h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="navbar-nav">
-                <?php echo $menuUsuarioEspecifico; ?>
-                <?php echo $menuPrincipal; ?>
-            </ul>
-        </div>
-    </div>
-
-    <nav class="navbar navbar-dark bg-dark">
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
-                aria-controls="offcanvasNavbar" aria-expanded="false" aria-label="Alterna navegação">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </nav>
-</div>
-
-<style>
-    #offcanvasNavbar {
-        width: 250px;
-    }
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
 <header>
-    <h1 class="text-center my-4">Glossário</h1>
+    <h1 class="text-center my-4">Gerenciador de Tarefas</h1>
 </header>
 
 <div class="container">
-    <div class="mb-4">
-        <form method="post" action="">
-            <div class="input-group">
-                <input type="text" class="form-control" name="search" placeholder="Pesquisar no glossário..." value="<?= htmlspecialchars($searchTerm) ?>">
-                <button type="submit" class="btn_pesq">Pesquisar</button>
+    <form method="post" action="">
+        <input type="hidden" name="action" value="add" id="actionField">
+        <input type="hidden" name="id_tarefa" value="" id="idField">
+
+        <div class="row mb-3">
+            <div class="col">
+                <input type="text" name="setor" class="form-control" placeholder="Setor" required>
             </div>
-        </form>
-    </div>
-
-    <?php if (isset($_SESSION['tipo_sessao']) && $_SESSION['tipo_sessao'] === 'administrador'): ?>
-        <div class="mb-4">
-            <h2 id="formHeader">Adicionar Nova Palavra</h2>
-            <form method="post" action="" id="glossarioForm">
-                <input type="hidden" name="action" value="add" id="actionField">
-                <input type="hidden" name="id_palavra" value="" id="idField">
-                <div class="mb-3">
-                    <label for="term" class="form-label">Palavra:</label>
-                    <input type="text" class="form-control" name="term" id="term" required>
-                </div>
-                <div class="mb-3">
-                    <label for="definition" class="form-label">Definição</label>
-                    <textarea class="form-control" name="definition" id="definition" rows="3" required></textarea>
-                </div>
-                <button type="submit" class="btn_add" id="submitButton">Adicionar</button>
-            </form>
+            <div class="col">
+                <select name="prioridade" class="form-control" required>
+                    <option value="">Prioridade</option>
+                    <option value="baixa">Baixa</option>
+                    <option value="media">Média</option>
+                    <option value="alta">Alta</option>
+                </select>
+            </div>
+            <div class="col">
+                <input type="date" name="datacriacao" class="form-control" required>
+            </div>
         </div>
-    <?php endif; ?>
 
-    <section class="cards-section" id="glossaryCards">
-        <?php if ($result && $result->num_rows > 0): ?>
-            <?php while ($linha = $result->fetch_assoc()): ?>
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title"><?= destacarTermo(htmlspecialchars($linha['titulo']), $searchTerm) ?></h5>
-                        <p class="card-text"><?= destacarTermo(htmlspecialchars($linha['descricao']), $searchTerm) ?></p>
-                    
-                        <?php if (isset($_SESSION['tipo_sessao']) && $_SESSION['tipo_sessao'] === 'administrador'): ?>
-                            <form method="post" action="" class="d-inline">
-                                <input type="hidden" name="action" value="delete">
-                                <input type="hidden" name="id_palavra" value="<?= $linha['id_palavra'] ?>">
-                                <button type="submit" class="btn_excluir">Excluir</button>
-                            </form>
-                            <button class="btn_editar" onclick="fillEditForm(<?= $linha['id_palavra'] ?>, '<?= addslashes($linha['titulo']) ?>', '<?= addslashes($linha['descricao']) ?>')">Editar</button>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <p class="text-center">Nenhuma entrada encontrada para o termo pesquisado.</p>
-        <?php endif; ?>
+        <input type="text" name="titulo" class="form-control mb-3" placeholder="Título da tarefa" required>
+
+        <textarea name="descricao" class="form-control mb-3" placeholder="Descrição da tarefa" required></textarea>
+
+        <div class="row mb-3">
+            <div class="col">
+                <select name="status" class="form-control" required>
+                    <option value="">Status</option>
+                    <option value="baixa">A fazer</option>
+                    <option value="media">Fazendo</option>
+                    <option value="alta">Concluida</option>
+                </select>
+            </div>
+            <div class="col">
+                <input type="number" name="usuario" class="form-control" placeholder="ID do Usuário" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success" id="submitButton">Salvar</button>
+    </form>
     </section>
 </div>
-
 <script>
-function fillEditForm(id, term, definition) {
-    document.getElementById('formHeader').innerText = "Editar Palavra";
-    document.getElementById('term').value = term;
-    document.getElementById('definition').value = definition;
+function fillEditForm(id, setor, prioridade, data, descricao, status, usuario, titulo) {
+    document.querySelector('[name=setor]').value = setor;
+    document.querySelector('[name=prioridade]').value = prioridade;
+    document.querySelector('[name=datacriacao]').value = data;
+    document.querySelector('[name=descricao]').value = descricao;
+    document.querySelector('[name=status]').value = status;
+    document.querySelector('[name=usuario]').value = usuario;
+    document.querySelector('[name=titulo]').value = titulo;
     document.getElementById('idField').value = id;
     document.getElementById('actionField').value = 'edit';
     document.getElementById('submitButton').innerText = "Salvar Alterações";
 }
 </script>
-
 </body>
 </html>

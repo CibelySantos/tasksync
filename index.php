@@ -1,5 +1,5 @@
 <?php
-include './tasksync/bd/conexao.php';
+include './bd/conexao.php';
 session_start();
 
 $mensagem = '';
@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $usuario_logado = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if (password_verify($senha, $usuario_logado['senha_usuarios'])) {
-                    $_SESSION['id_usuarios'] = $usuario_logado['id_usuarios'];
+                    $_SESSION['usuario_sessao'] = $usuario_logado['senha_usuarios'];
                     $_SESSION['usuario_sessao'] = $usuario_logado['nome_usuarios'];
 
                     header('Location: gerenctarefa.php');

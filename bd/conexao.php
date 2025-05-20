@@ -1,16 +1,13 @@
 <?php
-$host = 'localhost';
-$dbname = 'tasksync';
-$username = 'root';
-$password = ''; 
+$host = "localhost";
+$user = "root";
+$password = ""; 
+$database = "tasksync";
 
-try {
-    $conexao = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
-    $conexao->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    echo "Erro na conexão com o banco de dados: " . $e->getMessage();
-    exit(); 
+$conn = new mysqli($host, $user, $password, $database);
+
+if ($conn->connect_error) {
+    die("Falha na conexão: " . $conn->connect_error);
 }
 ?>
 <!DOCTYPE html>
